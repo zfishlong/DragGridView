@@ -1,12 +1,5 @@
 package com.ilmare.draggridview;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-
-import com.ilmare.draggridview.R;
-import com.ilmare.draggridview.view.DragGridBaseAdapter;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,21 +7,30 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-/**
- * @blog http://blog.csdn.net/xiaanming
- *
- * @author xiaanming
- *
- */
+
+import com.ilmare.draggridview.view.DragGridBaseAdapter;
+import com.squareup.picasso.Picasso;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+
+
 public class DragAdapter extends BaseAdapter implements DragGridBaseAdapter {
 
 	private List<HashMap<String, Object>> list;
 
 	private LayoutInflater mInflater;
+
 	private int mHidePosition = -1;
+
+	private Context context;
+
 
 	public DragAdapter(Context context, List<HashMap<String, Object>> list){
 		this.list = list;
+		this.context=context;
 		mInflater = LayoutInflater.from(context);
 	}
 
@@ -57,7 +59,10 @@ public class DragAdapter extends BaseAdapter implements DragGridBaseAdapter {
 		ImageView mImageView = (ImageView) convertView.findViewById(R.id.item_image);
 		TextView mTextView = (TextView) convertView.findViewById(R.id.item_text);
 
-		mImageView.setImageResource((Integer) list.get(position).get("item_image"));
+
+		//加载图片
+		Picasso.with(context).load(list.get(position).get("item_image").toString()).into(mImageView);
+
 		mTextView.setText((CharSequence) list.get(position).get("item_text"));
 
 		if(position == mHidePosition){
@@ -71,10 +76,13 @@ public class DragAdapter extends BaseAdapter implements DragGridBaseAdapter {
 	@Override
 	public void reorderItems(int oldPosition, int newPosition) {
 		HashMap<String, Object> temp = list.get(oldPosition);
+
 		if(oldPosition < newPosition){
+
 			for(int i=oldPosition; i<newPosition; i++){
 				Collections.swap(list, i, i+1);
 			}
+
 		}else if(oldPosition > newPosition){
 			for(int i=oldPosition; i>newPosition; i--){
 				Collections.swap(list, i, i-1);
